@@ -1,5 +1,5 @@
 import { useForm } from 'react-hook-form'
-import { Form, Link } from 'react-router-dom'
+import { Form, Link, useNavigate } from 'react-router-dom'
 import {
   FormControl,
   FormLabel,
@@ -11,6 +11,7 @@ import {
 } from '@chakra-ui/react'
 import { API_BASE_URL } from '../util';
 import toast from 'react-hot-toast';
+import { useUser } from '../context/userContext';
 
 export default function SignUp(){
     const {
@@ -18,6 +19,9 @@ export default function SignUp(){
         register,
         formState: { errors, isSubimtting }
     } = useForm();
+
+    const updateUser = useUser()
+
     const doSubmit = async values => {
         try {
             const res = await fetch(`${API_BASE_URL}/auth/signup`,{
@@ -30,6 +34,8 @@ export default function SignUp(){
             const data = await res.json()
             if (res.status == 200){
                 toast.success('Sign Up successful, logged in.')
+                updateUser(data)
+                useNavigate('/profile')
             } else {
                 toast.error(data.message)
             }
